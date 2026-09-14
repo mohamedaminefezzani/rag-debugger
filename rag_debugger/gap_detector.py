@@ -6,6 +6,17 @@ import os
 import re
 
 @dataclass
+class ChunkResult:
+    content: str
+    score: float
+    chunk_id: Optional[str] = None
+    source: Optional[str] = None
+    rank: Optional[int] = None
+    metadata: Optional[dict] = None
+    selected: bool = True
+
+
+@dataclass
 class SubIntent:
     text: str
     embedding: list[float] = field(default_factory=list)
@@ -53,7 +64,7 @@ class GeminiClient:
 
         genai.configure(api_key=key)
         self._genai = genai
-        self._model = genai.GenerativeModel("gemini-2.5-flash")
+        self._model = genai.GenerativeModel("gemini-3.5-flash-lite")
         self._embed_model = "gemini-embedding-001"
 
     def complete(self, prompt: str, max_tokens: int = 512) -> str:
@@ -105,7 +116,7 @@ class GapDetector:
                 best_idx = int(np.argmax(scores))
                 si.best_score = round(scores[best_idx], 4)
                 si.best_chunk = chunks[best_idx]["content"]
-            si.covered = si.best_score >= self.threshold
+            si.covered = self._rerank(si.text, si.best_chunk or "", si.best_score)
 
         # Stage 3 — synthesize suggestion for uncovered sub-intents
         uncovered = [si for si in sub_intents if not si.covered]
@@ -133,9 +144,9 @@ class GapDetector:
 
     def _decompose(self, query: str) -> list[SubIntent]:
         prompt = f"""Break this query into atomic sub-intents.
-    Return ONLY a JSON array of objects with a "text" key. No markdown, no preamble.
-    Example: [{{"text": "how to cancel"}}]
-    Query: {query}"""
+Return ONLY a JSON array of objects with a "text" key. No markdown, no preamble.
+Example: [{{"text": "how to cancel"}}]
+Query: {query}"""
         raw = self.client.complete(prompt, max_tokens=1024)
         raw = raw.strip()
         for fence in ["```json", "```"]:
@@ -148,6 +159,20 @@ class GapDetector:
         except json.JSONDecodeError:
             items = [{"text": query}]
         return [SubIntent(text=item["text"]) for item in items if "text" in item]
+
+    def _rerank(self, sub_intent: str, chunk: str, score: float) -> bool:
+        """For borderline scores, ask LLM if chunk actually answers the sub-intent."""
+        if score >= 0.75:
+            return True   # confident — skip LLM call
+        if score < 0.60:
+            return False  # clearly irrelevant — skip LLM call
+
+        prompt = f"""Does this chunk answer the question below? Reply only YES or NO.
+
+    Question: {sub_intent}
+    Chunk: {chunk}"""
+        raw = self.client.complete(prompt, max_tokens=5).strip().upper()
+        return raw.startswith("YES")
 
     def _synthesize(self, query: str, uncovered: list[SubIntent]) -> tuple[str, list[str]]:
         gaps = "\n".join(

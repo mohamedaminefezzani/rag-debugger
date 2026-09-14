@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rag-debugger-amine"
-version = "0.1.0"
+version = "0.2.0"
 description = "Intercept, inspect, and fix your RAG retrieval pipeline"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -38,6 +38,10 @@ langchain = [
 ]
 llamaindex = [
     "llama-index>=0.10",
+]
+dashboard = [
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
 ]
 
 [project.urls]

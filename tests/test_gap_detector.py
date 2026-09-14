@@ -5,7 +5,7 @@ Run with: pytest test_gap_detector.py -v
 import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
-from rag_debugger.gap_detector import GapDetector, GeminiClient, GapReport, SubIntent, _cosine
+from gap_detector import GapDetector, GeminiClient, GapReport, SubIntent, _cosine
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -171,7 +171,7 @@ class TestGapDetector:
         client.embed.side_effect = embed
         client.embed_document.side_effect = lambda t: [1.0] + [0.0] * 7
 
-        detector = GapDetector(client, threshold=0.65)
+        detector = GapDetector(client, threshold=0.72)
         report = detector.analyze("cancel on iOS and refund", CHUNKS_GOOD)
 
         # Only "cancel subscription" will be covered
@@ -184,7 +184,7 @@ class TestGapDetector:
         client.embed.side_effect = lambda t: v
         client.embed_document.side_effect = lambda t: v
 
-        detector = GapDetector(client, threshold=0.65)
+        detector = GapDetector(client, threshold=0.72)
         report = detector.analyze("How do I cancel?", CHUNKS_GOOD)
 
         assert isinstance(report, GapReport)
@@ -192,7 +192,7 @@ class TestGapDetector:
 
     def test_priority_default_when_no_history(self):
         client = make_mock_client()
-        detector = GapDetector(client, threshold=0.65, history_store=None)
+        detector = GapDetector(client, threshold=0.72, history_store=None)
         report = detector.analyze("cancel on iOS", CHUNKS_PARTIAL)
 
         if report.has_gap:
@@ -203,7 +203,7 @@ class TestGapDetector:
         history = MagicMock()
         history.count_similar_gaps.return_value = 25  # 25/50 = 0.5
 
-        detector = GapDetector(client, threshold=0.65, history_store=history)
+        detector = GapDetector(client, threshold=0.72, history_store=history)
         report = detector.analyze("cancel on iOS", CHUNKS_PARTIAL)
 
         if report.has_gap:
@@ -212,7 +212,7 @@ class TestGapDetector:
 
     def test_str_representation(self):
         client = make_mock_client()
-        detector = GapDetector(client, threshold=0.65)
+        detector = GapDetector(client, threshold=0.72)
         report = detector.analyze("cancel on iOS and refund", CHUNKS_PARTIAL)
         text = str(report)
         assert "GAP" in text or "OK" in text
@@ -228,7 +228,7 @@ class TestGapDetector:
 class TestGapDetectorLive:
     def test_live_analysis(self):
         client = GeminiClient()
-        detector = GapDetector(client, threshold=0.65)
+        detector = GapDetector(client, threshold=0.72)
 
         chunks = [
             {"content": "To cancel your subscription, go to Settings > Billing > Cancel Plan."},
