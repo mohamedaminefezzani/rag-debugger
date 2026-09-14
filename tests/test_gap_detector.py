@@ -5,7 +5,7 @@ Run with: pytest test_gap_detector.py -v
 import pytest
 import numpy as np
 from unittest.mock import MagicMock, patch
-from gap_detector import GapDetector, GeminiClient, GapReport, SubIntent, _cosine
+from rag_debugger.gap_detector import GapDetector, GeminiClient, GapReport, SubIntent, _cosine
 
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
