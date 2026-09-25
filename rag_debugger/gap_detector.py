@@ -167,11 +167,13 @@ Query: {query}"""
         if score < 0.60:
             return False  # clearly irrelevant — skip LLM call
 
+        print(f"  [reranker] '{sub_intent[:40]}' score={score} → asking LLM...")
         prompt = f"""Does this chunk answer the question below? Reply only YES or NO.
 
     Question: {sub_intent}
     Chunk: {chunk}"""
         raw = self.client.complete(prompt, max_tokens=5).strip().upper()
+        print(f"  [reranker] LLM said: {raw}")
         return raw.startswith("YES")
 
     def _synthesize(self, query: str, uncovered: list[SubIntent]) -> tuple[str, list[str]]:

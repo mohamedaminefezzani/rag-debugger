@@ -73,13 +73,15 @@ TURNS = [
     "I cancelled but I want a refund for this month.",
     # Turn 5: covered
     "How do I reset my password?",
+    # Turn 6: no cover
+    "How to apply for the job?",
 ]
 
 print("\n" + "="*60)
 print("  rag-debugger demo — multi-turn support bot")
 print("="*60 + "\n")
 
-with rd.session(id="conv-demo-005", user="test-user") as sess:
+with rd.session(id="conv-demo-008", user="test-user") as sess:
     for i, query in enumerate(TURNS, 1):
         chunks = retriever.retrieve(query)
         report = detector.analyze(query, chunks)
@@ -97,8 +99,8 @@ with rd.session(id="conv-demo-005", user="test-user") as sess:
                 "suggestion": report.suggestion,
                 "coverage": report.coverage_score,
             }), latest.id)
-    )
-    store.conn.commit()
+        )
+        store.conn.commit()
 
 # ── Session summary ───────────────────────────────────────────────────────────
 

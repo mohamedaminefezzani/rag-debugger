@@ -139,9 +139,17 @@ def _make_logger(normalize_fn, store, label, session_id, method_name="retriever"
     """Returns a decorator that logs retrieval calls."""
     def decorator(fn):
         @functools.wraps(fn)
-        def wrapper(query, *args, **kwargs):
+        def wrapper(*args, **kwargs):
+            # args[0] may be 'self' (unbound method) or the query string (bound method)
+            # detect by checking if first arg is a string
+            if args and isinstance(args[0], str):
+                query = args[0]
+            elif len(args) > 1 and isinstance(args[1], str):
+                query = args[1]
+            else:
+                query = kwargs.get("query", "")
             t0 = time.time()
-            raw = fn(query, *args, **kwargs)
+            raw = fn(*args, **kwargs)
             elapsed = round(time.time() - t0, 4)
             chunks = normalize_fn(raw)
             store.save(RetrievalEvent(
@@ -151,7 +159,7 @@ def _make_logger(normalize_fn, store, label, session_id, method_name="retriever"
                 session_id=session_id or get_active_session_id(),
                 metadata={"elapsed_ms": round(elapsed * 1000)},
             ))
-            return raw  # always return original result unchanged
+            return raw
         return wrapper
     return decorator
 

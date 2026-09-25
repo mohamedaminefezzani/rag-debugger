@@ -102,3 +102,23 @@ def dashboard(
     """Launch the local dashboard at http://localhost:7842"""
     from .dashboard import launch
     launch(_get_store(), _project or "rag-debugger", host=host, port=port, open_browser=open_browser)
+
+
+# trace is a property-like object — built on first access after init()
+def _get_trace():
+    from .trace import make_trace_decorator
+    return make_trace_decorator(_get_store())
+
+
+class _TraceProxy:
+    """
+    Allows rd.trace to work as both:
+      @rd.trace          (bare, no parens)
+      @rd.trace(label=x) (with args)
+    by delegating to make_trace_decorator at call time.
+    """
+    def __call__(self, fn=None, *, label=None, score_key="score", content_key="content", session_id=None):
+        return _get_trace()(fn, label=label, score_key=score_key, content_key=content_key, session_id=session_id)
+
+
+trace = _TraceProxy()
