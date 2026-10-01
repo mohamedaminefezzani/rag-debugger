@@ -2,7 +2,7 @@
 
 **Intercept, inspect, and fix your RAG retrieval pipeline.**
 
-Most RAG bugs aren't in your code — they're in your retrieval. Wrong chunks get
+Most RAG bugs aren't in your code, they're in your retrieval. Wrong chunks get
 selected, knowledge gaps go undetected, and you find out when users complain.
 `rag-debugger` gives you visibility into exactly what your vector DB returned,
 why it won, and what's missing from your knowledge base.
@@ -57,7 +57,7 @@ high, the query looks covered. `rag-debugger` decomposes it into atomic
 sub-intents and scores each one independently, so a missing refund policy
 is always caught even when the cancellation docs are excellent.
 
-Borderline scores (0.60–0.75) are passed through a reranker — a lightweight
+Borderline scores (0.60–0.75) are passed through a reranker, a lightweight
 LLM call that asks "does this chunk actually answer this question?" — so
 semantically similar but irrelevant chunks don't pass as covered.
 
@@ -81,8 +81,31 @@ print(summary)
 #   gaps:        0 / 2
 ```
 
-Sessions are thread-safe — concurrent requests in a web app won't bleed into
+Sessions are thread-safe, concurrent requests in a web app won't bleed into
 each other.
+
+## Trace decorator
+
+Instrument any retrieval function with a single line — no need to wrap a retriever object:
+
+```python
+import rag_debugger as rd
+
+rd.init(project="my-rag-app")
+
+@rd.trace(label="my-retriever")
+def retrieve(query: str) -> list[dict]:
+    return vector_db.search(query)
+
+# Also works bare, async, and with custom key names
+@rd.trace
+async def retrieve(query: str) -> list[dict]:
+    return await vector_db.asearch(query)
+
+@rd.trace(score_key="relevance", content_key="text")
+def retrieve(query: str) -> list[dict]:
+    return pinecone.query(query)
+```
 
 ## Local dashboard
 
@@ -93,7 +116,7 @@ rd.dashboard()  # opens http://localhost:7842
 ```
 
 The dashboard shows:
-- Per-session summary — avg score, worst score, gap count
+- Per-session summary, avg score, worst score, gap count
 - Per-event chunk score bars with content preview
 - Gap flags with missing topics and fix suggestions
 - Auto-refreshes every 10 seconds
