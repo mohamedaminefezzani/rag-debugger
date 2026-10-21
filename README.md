@@ -2,7 +2,6 @@
 
 **Find and fix gaps in your RAG knowledge base.**
 
-<<<<<<< HEAD
 Standard RAG evals tell you if retrieval worked. They don't tell you *why* it
 failed or *what to add* to fix it. `rag-debugger` intercepts your retrieval
 calls, decomposes each query into atomic sub-intents, scores each one
@@ -18,12 +17,6 @@ coverage, then suggests in plain English what docs to add.
 ```
 
 ---
-=======
-Most RAG bugs aren't in your code, they're in your retrieval. Wrong chunks get
-selected, knowledge gaps go undetected, and you find out when users complain.
-`rag-debugger` gives you visibility into exactly what your vector DB returned,
-why it won, and what's missing from your knowledge base.
->>>>>>> dac26a00aa9768a23229a3ea751c6c03c76f3d06
 
 ## Install
 
