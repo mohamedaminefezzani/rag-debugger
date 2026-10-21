@@ -2,6 +2,7 @@
 
 **Find and fix gaps in your RAG knowledge base.**
 
+<<<<<<< HEAD
 Standard RAG evals tell you if retrieval worked. They don't tell you *why* it
 failed or *what to add* to fix it. `rag-debugger` intercepts your retrieval
 calls, decomposes each query into atomic sub-intents, scores each one
@@ -17,6 +18,12 @@ coverage, then suggests in plain English what docs to add.
 ```
 
 ---
+=======
+Most RAG bugs aren't in your code, they're in your retrieval. Wrong chunks get
+selected, knowledge gaps go undetected, and you find out when users complain.
+`rag-debugger` gives you visibility into exactly what your vector DB returned,
+why it won, and what's missing from your knowledge base.
+>>>>>>> dac26a00aa9768a23229a3ea751c6c03c76f3d06
 
 ## Install
 
@@ -88,11 +95,97 @@ Works with LangChain, LlamaIndex, or any custom retriever.
 
 ---
 
+<<<<<<< HEAD
 ## LLM Client
+=======
+Borderline scores (0.60–0.75) are passed through a reranker, a lightweight
+LLM call that asks "does this chunk actually answer this question?" — so
+semantically similar but irrelevant chunks don't pass as covered.
+>>>>>>> dac26a00aa9768a23229a3ea751c6c03c76f3d06
 
 `GapDetector` accepts any LLM client. Three built-in options:
 
+<<<<<<< HEAD
 ### GeminiClient - free tier, zero config
+=======
+Group multi-turn conversations under a single session to get a summary of
+retrieval quality across the whole interaction:
+
+```python
+with rd.session(id="conv-123", user="user-42") as s:
+    retriever.get_relevant_documents("first query")
+    retriever.get_relevant_documents("follow-up query")
+
+summary = s.summary()
+print(summary)
+# Session conv-123
+#   duration:    430ms
+#   events:      2
+#   avg score:   0.741
+#   worst score: 0.677
+#   gaps:        0 / 2
+```
+
+Sessions are thread-safe, concurrent requests in a web app won't bleed into
+each other.
+
+## Trace decorator
+
+Instrument any retrieval function with a single line — no need to wrap a retriever object:
+
+```python
+import rag_debugger as rd
+
+rd.init(project="my-rag-app")
+
+@rd.trace(label="my-retriever")
+def retrieve(query: str) -> list[dict]:
+    return vector_db.search(query)
+
+# Also works bare, async, and with custom key names
+@rd.trace
+async def retrieve(query: str) -> list[dict]:
+    return await vector_db.asearch(query)
+
+@rd.trace(score_key="relevance", content_key="text")
+def retrieve(query: str) -> list[dict]:
+    return pinecone.query(query)
+```
+
+## Local dashboard
+
+Visualize retrieval events, chunk scores, and gap flags in a local web UI:
+
+```python
+rd.dashboard()  # opens http://localhost:7842
+```
+
+The dashboard shows:
+- Per-session summary, avg score, worst score, gap count
+- Per-event chunk score bars with content preview
+- Gap flags with missing topics and fix suggestions
+- Auto-refreshes every 10 seconds
+
+## Integrations
+
+Works with LangChain, LlamaIndex, and any custom pipeline:
+
+```python
+# LangChain
+retriever = rd.wrap_retriever(vectorstore.as_retriever(), label="docs")
+
+# LlamaIndex
+retriever = rd.wrap_retriever(index.as_retriever())
+
+# Custom object
+retriever = rd.wrap_retriever(my_retriever, method="fetch_docs")
+```
+
+## LLM & embedding backend
+
+`rag-debugger` uses Google Gemini by default (free tier via
+[Google AI Studio](https://aistudio.google.com)):
+>>>>>>> dac26a00aa9768a23229a3ea751c6c03c76f3d06
 
 ```python
 from rag_debugger import GeminiClient
@@ -112,6 +205,7 @@ detector = GapDetector(client)
 pip install rag-debugger-amine[litellm]
 ```
 
+<<<<<<< HEAD
 ```python
 from rag_debugger import LiteLLMClient
 
@@ -364,3 +458,6 @@ Custom API / wrapper?
 **v0.1.0**
 - `GapDetector` - sub-intent decomposition, cosine scoring, reranker, synthesizer
 - `GeminiClient` - free tier via Google AI Studio
+=======
+MIT
+>>>>>>> dac26a00aa9768a23229a3ea751c6c03c76f3d06
