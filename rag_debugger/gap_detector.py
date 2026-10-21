@@ -79,15 +79,20 @@ class GapReport:
 
 # ── Cosine similarity ─────────────────────────────────────────────────────────
 
+
 def _cosine(a: list[float], b: list[float]) -> float:
     if not a or not b:
         return 0.0
+
     dot = sum(x * y for x, y in zip(a, b))
     na = sum(x * x for x in a) ** 0.5
     nb = sum(x * x for x in b) ** 0.5
+
     if na == 0 or nb == 0:
         return 0.0
-    return dot / (na * nb)
+
+    score = dot / (na * nb)
+    return max(-1.0, min(1.0, score))
 
 
 # ── GeminiClient ──────────────────────────────────────────────────────────────
