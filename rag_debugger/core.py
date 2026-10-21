@@ -7,7 +7,7 @@ from .wrap import wrap_retriever as _wrap
 from .gap_detector import ChunkResult
 from .session import Session
 
-# Global state — set by rd.init()
+# Global state - set by rd.init()
 _store: Optional[SQLiteStore] = None
 _project: Optional[str] = None
 
@@ -104,7 +104,7 @@ def dashboard(
     launch(_get_store(), _project or "rag-debugger", host=host, port=port, open_browser=open_browser)
 
 
-# trace is a property-like object — built on first access after init()
+# trace is a property-like object - built on first access after init()
 def _get_trace():
     from .trace import make_trace_decorator
     return make_trace_decorator(_get_store())

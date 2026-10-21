@@ -1,5 +1,5 @@
 """
-wrap_retriever() — zero-friction instrumentation for any retrieval object.
+wrap_retriever() - zero-friction instrumentation for any retrieval object.
 
 Detection order:
   1. LangChain BaseRetriever  → patch get_relevant_documents()
@@ -48,7 +48,7 @@ def _normalize_langchain(results: list) -> list[dict]:
         if hasattr(doc, "metadata"):
             chunk["metadata"] = doc.metadata
             chunk["source"] = doc.metadata.get("source", "")
-            # LangChain doesn't always attach scores — use metadata if present
+            # LangChain doesn't always attach scores - use metadata if present
             chunk["score"] = doc.metadata.get("score",
                              doc.metadata.get("relevance_score",
                              doc.metadata.get("similarity_score", None)))
@@ -80,7 +80,7 @@ def _normalize_custom(results: Any) -> list[dict]:
         out = []
         for item in results:
             if isinstance(item, dict):
-                # already dict — just ensure "content" key exists
+                # already dict - just ensure "content" key exists
                 content = item.get("content") or item.get("text") or item.get("page_content") or str(item)
                 out.append({**item, "content": content})
             elif isinstance(item, str):
@@ -122,7 +122,7 @@ def wrap_retriever(
     if _is_llamaindex(retriever):
         return _wrap_llamaindex(retriever, store, label, session_id)
 
-    # custom object — find method to patch
+    # custom object - find method to patch
     candidate_methods = [method] if method else ["retrieve", "query", "get_relevant_documents", "search"]
     for m in candidate_methods:
         if callable(getattr(retriever, m, None)):

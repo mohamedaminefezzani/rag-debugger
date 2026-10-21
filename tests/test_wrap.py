@@ -1,5 +1,5 @@
 """
-Tests for wrap_retriever() — all mocked, no real LangChain/LlamaIndex needed.
+Tests for wrap_retriever() - all mocked, no real LangChain/LlamaIndex needed.
 """
 import pytest
 import tempfile, os

@@ -1,5 +1,5 @@
 """
-Tests for @rd.trace decorator — sync, async, bare, with args, key overrides.
+Tests for @rd.trace decorator - sync, async, bare, with args, key overrides.
 """
 import pytest
 import asyncio

@@ -1,5 +1,5 @@
 """
-session() — context manager that groups retrieval events under a session ID.
+session() - context manager that groups retrieval events under a session ID.
 
 Usage:
     with rd.session(id="conv-123", user="user-42") as s:

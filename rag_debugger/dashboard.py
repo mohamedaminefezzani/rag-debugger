@@ -1,5 +1,5 @@
 """
-rd.dashboard() — local web dashboard served via FastAPI.
+rd.dashboard() - local web dashboard served via FastAPI.
 
 Usage:
     import rag_debugger as rd
@@ -88,10 +88,10 @@ pre{font-family:var(--mono);font-size:11px;background:var(--surface2);padding:10
 </header>
 
 <div class="stat-bar">
-  <div class="stat"><div class="val" id="s-sessions">—</div><div class="lbl">Sessions</div></div>
-  <div class="stat"><div class="val" id="s-events">—</div><div class="lbl">Total events</div></div>
-  <div class="stat"><div class="val" id="s-avg">—</div><div class="lbl">Avg top score</div></div>
-  <div class="stat"><div class="val" id="s-gaps">—</div><div class="lbl">Gap events</div></div>
+  <div class="stat"><div class="val" id="s-sessions">-</div><div class="lbl">Sessions</div></div>
+  <div class="stat"><div class="val" id="s-events">-</div><div class="lbl">Total events</div></div>
+  <div class="stat"><div class="val" id="s-avg">-</div><div class="lbl">Avg top score</div></div>
+  <div class="stat"><div class="val" id="s-gaps">-</div><div class="lbl">Gap events</div></div>
 </div>
 
 <div class="layout">
@@ -158,7 +158,7 @@ function renderMain(sessionId) {
   const worstScore = sess.lowest_top_score || 0;
 
   panel.innerHTML = `
-    <div class="section-hdr">Session summary — ${sessionId}</div>
+    <div class="section-hdr">Session summary - ${sessionId}</div>
     <div class="summary-grid">
       <div class="summary-cell"><div class="v">${sess.event_count}</div><div class="l">Events</div></div>
       <div class="summary-cell"><div class="v" style="color:${scoreColor(avgScore)}">${avgScore.toFixed(3)}</div><div class="l">Avg top score</div></div>

@@ -151,7 +151,7 @@ class TestSessionGrouping:
         with Session(store, id="context-id"):
             wrapped.retrieve("query")
 
-        # explicit id wins — event should be under explicit-id
+        # explicit id wins - event should be under explicit-id
         assert len(store.by_session("explicit-id")) == 1
         assert len(store.by_session("context-id")) == 0
 

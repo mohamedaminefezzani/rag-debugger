@@ -1,5 +1,5 @@
 """
-Tests for dashboard API endpoint — no browser, no uvicorn needed.
+Tests for dashboard API endpoint - no browser, no uvicorn needed.
 """
 import pytest
 import json

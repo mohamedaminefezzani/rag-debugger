@@ -1,5 +1,5 @@
 """
-@rd.trace decorator — instrument any retrieval function with one line.
+@rd.trace decorator - instrument any retrieval function with one line.
 
 Usage:
     @rd.trace
@@ -25,11 +25,11 @@ def _normalize_result(result: Any) -> list[dict]:
 
     first = result[0] if isinstance(result, list) and result else result
 
-    # LlamaIndex NodeWithScore — check before LangChain since MagicMock bleeds
+    # LlamaIndex NodeWithScore - check before LangChain since MagicMock bleeds
     if hasattr(first, "score") and hasattr(first, "node"):
         return _normalize_llamaindex(result)
 
-    # LangChain Document — has page_content attribute
+    # LangChain Document - has page_content attribute
     if hasattr(first, "page_content"):
         return _normalize_langchain(result)
 
@@ -63,7 +63,7 @@ def _make_trace(
     """Wrap a sync function with tracing."""
     @functools.wraps(fn)
     def sync_wrapper(*args, **kwargs):
-        # extract query — first positional arg or 'query' kwarg
+        # extract query - first positional arg or 'query' kwarg
         query = kwargs.get("query", args[0] if args else "")
         t0 = time.time()
         result = fn(*args, **kwargs)
@@ -125,11 +125,11 @@ def make_trace_decorator(store: SQLiteStore):
                 return _make_async_trace(f, store, label, score_key, content_key, session_id)
             return _make_trace(f, store, label, score_key, content_key, session_id)
 
-        # @rd.trace — called with the function directly
+        # @rd.trace - called with the function directly
         if fn is not None:
             return decorator(fn)
 
-        # @rd.trace(...) — called with arguments, return decorator
+        # @rd.trace(...) - called with arguments, return decorator
         return decorator
 
     return trace
